@@ -1,0 +1,26 @@
+version: "3.8"
+services:
+  app:
+    env_file:
+      - ".env"
+    image: hyperwallet-mirakl-connector:4.7.2-162-gf9c88e0.dirty
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=${PAYPAL_SPRING_PROFILE_ACTIVE:-prod}
+      - PWD=/workspace
+    volumes:
+      - ${PWD}/keys:/home/keys
+      - ${PWD}/financial-reports:/home/reports
+  smtp:
+    image: mailhog/mailhog
+    restart: always
+    hostname: paypal-hyperwallet-mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
